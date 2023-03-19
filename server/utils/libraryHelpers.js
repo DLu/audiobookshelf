@@ -10,7 +10,7 @@ module.exports = {
     return Buffer.from(decodeURIComponent(text), 'base64').toString()
   },
 
-  getFilteredLibraryItems(libraryItems, filterBy, user, feedsArray) {
+  getFilteredLibraryItems(libraryItems, filterBy, user, feedsArray, collectionsDB) {
     let filtered = libraryItems
 
     const searchGroups = ['genres', 'tags', 'series', 'authors', 'progress', 'narrators', 'missing', 'languages', 'tracks']
@@ -38,6 +38,11 @@ module.exports = {
           return false
         })
       } else if (group == 'missing') {
+        if (filter === 'collection') {
+            const collectionItems = collectionsDB.reduce((all_items, c) => {
+                return all_items.concat(c.books)
+            }, [])
+        }
         filtered = filtered.filter(li => {
           if (li.isBook) {
             if (filter === 'asin' && !li.media.metadata.asin) return true
@@ -53,6 +58,7 @@ module.exports = {
             if (filter === 'publisher' && !li.media.metadata.publisher) return true
             if (filter === 'language' && !li.media.metadata.language) return true
             if (filter === 'cover' && !li.media.coverPath) return true
+            if (filter === 'collection' && li.media.metadata.id not in collectionsDB) return true
           } else {
             return false
           }

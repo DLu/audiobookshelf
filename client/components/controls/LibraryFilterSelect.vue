@@ -382,6 +382,10 @@ export default {
         {
           id: 'cover',
           name: this.$strings.LabelCover
+        },
+        {
+          id: 'collection',
+          name: this.$strings.LabelCollections
         }
       ]
     },
